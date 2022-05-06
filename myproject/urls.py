@@ -19,6 +19,6 @@ from people.views import index, categories
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('people/', include('people.urls')),
+    path('', include('people.urls')),
 ]
 

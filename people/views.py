@@ -6,6 +6,11 @@ def index(request):
     return HttpResponse("Główna strona!")
 
 
-def categories(request):
-    return HttpResponse('<h1>Artykuły po kategoriach</h1>')
+def categories(request, cat_id):
+    print(request.GET)
+    return HttpResponse(f'<h1>Artykuły po kategoriach</h1><p>{cat_id}</p>')
+
+
+def archive(request, year):
+    return HttpResponse(f'Rok {year}')
 
