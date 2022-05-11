@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
-<h1>{{ title }}</h1>
 
-<ul>
+<ul class="list-articles">
     {% for person in woman %}
-    <li>
+    <li><div class="article-panel">
+        <p class="first">Kategorii: {{person.cat}}</p>
+        <p class="last">Data: {{person.time_update|date:"d-m-Y H:i:s"}}</p>
+    </div>
         <h2>{{person.title}}</h2>
-        <p>{{person.content}}</p>
-        <hr>
+        <p>{{person.content|linebreaks|truncatewords:50}}</p>
+        <div class="clear"></div>
+        <p class="link-read-post"><a href="{{ person.get_absolute_url }}">Czytać post</a></p>
     </li>
     {% endfor %}
 </ul>
