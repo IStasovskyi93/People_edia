@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+
+<ul>
+    {% for person in woman %}
+    <li>
+        <h2>{{person.title}}</h2>
+        <p>{{person.content}}</p>
+        <hr>
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock content %}
