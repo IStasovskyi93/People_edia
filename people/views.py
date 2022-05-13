@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseNotFound, Http404
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Woman, Category
 
 menu = [{'title': 'O stronie', 'url_name': 'about'},
@@ -40,8 +40,17 @@ def contact(request):
     return HttpResponse('Kontakt')
 
 
-def show_post(request, post_id):
-    return HttpResponse(f'Prezentacja artykuła z id = {post_id}')
+def show_post(request, post_slug):
+    post = get_object_or_404(Woman, slug=post_slug)
+
+    context = {
+        'post': post,
+        'menu': menu,
+        'title': post.title,
+        'cat_selected': post.cat_id,
+    }
+
+    return render(request, 'people/post.html', context=context)
 
 
 def show_category(request, cat_id):
