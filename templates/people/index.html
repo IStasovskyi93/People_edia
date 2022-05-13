@@ -8,6 +8,10 @@
         <p class="first">Kategorii: {{person.cat}}</p>
         <p class="last">Data: {{person.time_update|date:"d-m-Y H:i:s"}}</p>
     </div>
+    {% if person.photo %}
+        <p><img class="img-article-left thumb" src="{{person.photo.url}}"></p>
+    {% endif %}
+
         <h2>{{person.title}}</h2>
         <p>{{person.content|linebreaks|truncatewords:50}}</p>
         <div class="clear"></div>
