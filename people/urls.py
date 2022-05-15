@@ -1,8 +1,9 @@
 from django.urls import path, re_path
 from .views import *
+from django.views.decorators.cache import cache_page
 
 urlpatterns = [
-    path('', WomanHome.as_view(), name='home'),
+    path('', cache_page(60)(WomanHome.as_view()), name='home'),
     path('addpage/', AddPage.as_view(), name='add_page'),
     path('about/', about, name='about'),
     path('contact/', contact, name='contact'),
