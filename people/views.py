@@ -1,9 +1,12 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.views import LoginView
 from django.http import HttpResponse, HttpResponseNotFound, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
-
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Woman, Category
-from .forms import AddPostForm
+from .forms import AddPostForm, RegisterUserForm
 from django.views.generic import ListView, DetailView, CreateView
 from .utils import *
 
@@ -42,16 +45,17 @@ def pageNotFound(request, exception):
     return HttpResponseNotFound('<h1>Strona nie odnaleziona</h1>')
 
 
-class AddPage(CreateView):
+class AddPage(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
     template_name = 'people/addpage.html'
     success_url = reverse_lazy('home')
+    login_url = reverse_lazy('home')
+    raise_exception = True
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Dodawanie artykułu'
-        context['menu'] = menu
-        return context
+        c_def = self.get_user_context(title='Dodawanie artykułu')
+        return dict(list(context.items()) + list(c_def.items()))
 
 # def addpage(request):
 #     if request.method == 'POST':
@@ -65,15 +69,15 @@ class AddPage(CreateView):
 #     return render(request, 'people/addpage.html', {'menu': menu, 'title': 'Dodawanie artykułu', 'form': form})
 
 
-def login(request):
-    return HttpResponse('Autoryzacja')
+# def login(request):
+#     return HttpResponse('Autoryzacja')
 
 
 def contact(request):
     return HttpResponse('Kontakt')
 
 
-class ShowPost(DetailView):
+class ShowPost(DataMixin, DetailView):
     model = Woman
     template_name = 'people/post.html'
     slug_url_kwarg = 'post_slug'
@@ -81,9 +85,8 @@ class ShowPost(DetailView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = context['post']
-        context['menu'] = menu
-        return context
+        c_def = self.get_user_context(title=context['post'])
+        return dict(list(context.items()) + list(c_def.items()))
 
 
 # def show_post(request, post_slug):
@@ -99,7 +102,7 @@ class ShowPost(DetailView):
 #     return render(request, 'people/post.html', context=context)
 
 
-class WomanCategory(ListView):
+class WomanCategory(DataMixin, ListView):
     model = Woman
     template_name = 'people/index.html'
     context_object_name = 'posts'
@@ -110,10 +113,9 @@ class WomanCategory(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Kategoria - ' + str(context['posts'][0].cat)
-        context['menu'] = menu
-        context['cat_selected'] = context['posts'][0].cat_id
-        return context
+        c_def = self.get_user_context(title='Kategoria - ' + str(context['posts'][0].cat),
+                                      cat_selected=context['posts'][0].cat_id)
+        return dict(list(context.items()) + list(c_def.items()))
 
 # def show_category(request, cat_id):
 #     posts = Woman.objects.filter(cat_id=cat_id)
@@ -128,3 +130,27 @@ class WomanCategory(ListView):
 #         'cat_selected': cat_id,
 #     }
 #     return render(request, 'people/index.html', context=ctx)
+
+
+class RegisterUser(DataMixin, CreateView):
+    form_class = RegisterUserForm
+    template_name = 'people/register.html'
+    success_url = reverse_lazy('login')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title='Rejestracja')
+        return dict(list(context.items()) + list(c_def.items()))
+
+
+class LoginUser(DataMixin, LoginView):
+    form_class = AuthenticationForm
+    template_name = 'people/login.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title='Logowanie')
+        return dict(list(context.items()) + list(c_def.items()))
+
+    def get_success_url(self):
+        return reverse_lazy('home')
