@@ -22,7 +22,7 @@ class Woman(models.Model):
     class Meta:
         verbose_name = 'Słynne kobiety'
         verbose_name_plural = 'Słynne kobiety'
-        ordering = ['time_create', 'title']
+        ordering = ['-time_create', 'title']
 
 
 class Category(models.Model):
@@ -34,7 +34,7 @@ class Category(models.Model):
         return self.name
 
     def get_absolute_url(self):
-        return reverse('category', kwargs={'cat_id': self.pk})
+        return reverse('category', kwargs={'cat_slug': self.slug})
 
     class Meta:
         verbose_name = 'Kategoria'

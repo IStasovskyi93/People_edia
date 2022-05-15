@@ -3,7 +3,7 @@
 {% block content %}
 
 <ul class="list-articles">
-    {% for person in woman %}
+    {% for person in object_list %}
     <li><div class="article-panel">
         <p class="first">Kategorii: {{person.cat}}</p>
         <p class="last">Data: {{person.time_update|date:"d-m-Y H:i:s"}}</p>
