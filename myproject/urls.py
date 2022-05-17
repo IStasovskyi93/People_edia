@@ -21,14 +21,15 @@ from myproject import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('captcha/', include('captcha.urls')),
     path('', include('people.urls')),
 ]
 
-# if settings.DEBUG:
+if settings.DEBUG:
 
-    # urlpatterns = [
-    #     path('__debug__/', include('debug_toolbar.urls')),
-    # ] + urlpatterns
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns = [
+        path('__debug__/', include('debug_toolbar.urls')),
+    ] + urlpatterns
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = pageNotFound

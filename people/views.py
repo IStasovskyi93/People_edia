@@ -6,8 +6,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Woman, Category
-from .forms import AddPostForm, RegisterUserForm, LoginUserForm
-from django.views.generic import ListView, DetailView, CreateView
+from .forms import AddPostForm, RegisterUserForm, LoginUserForm, ContactForm
+from django.views.generic import ListView, DetailView, CreateView, FormView
 from .utils import *
 
 
@@ -73,8 +73,23 @@ class AddPage(LoginRequiredMixin, DataMixin, CreateView):
 #     return HttpResponse('Autoryzacja')
 
 
-def contact(request):
-    return HttpResponse('Kontakt')
+# def contact(request):
+#     return HttpResponse('Kontakt')
+
+
+class ContactFormView(DataMixin, FormView):
+    form_class = ContactForm
+    template_name = 'people/contact.html'
+    success_url = reverse_lazy('home')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = self.get_user_context(title='Kontakt')
+        return dict(list(context.items()) + list(c_def.items()))
+
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        return redirect('home')
 
 
 class ShowPost(DataMixin, DetailView):
